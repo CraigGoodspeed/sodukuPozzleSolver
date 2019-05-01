@@ -1,14 +1,24 @@
 package za.co.goodspeed.craig.soduku;
 
+import lombok.SneakyThrows;
+
+import java.util.concurrent.Callable;
+
 public class Puzzle {
+    interface loopHelper{
+        void method(int vertical,int horizontal);
+    }
+    interface  loopHelperReturn<T1>{
+        T1 method(int vertical, int horizontal);
+    }
     Item[][] thePuzzle = new Item[9][9];
 
     public Puzzle(){
-        for(short vertical = 0; vertical < thePuzzle.length; vertical++){
-            for(short horizontal = 0; horizontal < thePuzzle[vertical].length; horizontal++){
-                thePuzzle[vertical][horizontal] = new Item(vertical, horizontal, thePuzzle);
-            }
-        }
+        loopThroughPuzzle(
+                (int vertical, int horizontal) ->{
+                    thePuzzle[vertical][horizontal] = new Item(vertical, horizontal, thePuzzle);
+                }
+        );
     }
 
     private void setItem(int vertical, int horizontal, Integer value ){
@@ -17,14 +27,49 @@ public class Puzzle {
     }
 
     private void refreshReferences(){
-        for(short vertical = 0; vertical < thePuzzle.length; vertical++){
-            for(short horizontal = 0; horizontal < thePuzzle[vertical].length; horizontal++){
+        loopThroughPuzzle((int vertical, int horizontal) -> {
                 thePuzzle[vertical][horizontal].setHorizontalReference();
                 thePuzzle[vertical][horizontal].setVerticalReference();
                 thePuzzle[vertical][horizontal].setSquareReference();
+        });
+    }
+
+    public String outputPuzzle(){
+        StringBuilder data = new StringBuilder();
+        loopThroughPuzzle(
+                (int vertical, int horizontal) -> {
+                    data.append(thePuzzle[horizontal][vertical].getNumber() == null ? "" : thePuzzle[horizontal][vertical].getNumber());
+                    data.append("\t");
+                    if(horizontal > 0 && horizontal % 8 == 0)
+                        data.append("\n");
+                }
+        );
+        return data.toString();
+    }
+
+    @SneakyThrows
+    public void loopThroughPuzzle(loopHelper toCall){
+        for(int vertical = 0; vertical < thePuzzle.length; vertical++) {
+            for (int horizontal = 0; horizontal < thePuzzle[vertical].length; horizontal++) {
+                toCall.method(vertical,horizontal);
             }
         }
     }
+
+    @SneakyThrows
+    public Object loopThroughPuzzle(loopHelperReturn toCall, Object defaultValue){
+        Object returned = null;
+        for(int vertical = 0; vertical < thePuzzle.length; vertical++) {
+            for (int horizontal = 0; horizontal < thePuzzle[vertical].length; horizontal++) {
+                returned = toCall.method(vertical,horizontal);
+                if(returned.equals(defaultValue))
+                    continue;
+                else return returned;
+            }
+        }
+        return defaultValue;
+    }
+
     public static Puzzle generateEasyPuzzle(){
         Puzzle toReturn = new Puzzle();
 
@@ -125,34 +170,35 @@ public class Puzzle {
     public Integer[][] solvePuzzle(){
         Integer[][] toReturn = new Integer[9][9];
         while(hasEmpties(toReturn)) {
-            for (int vert = 0; vert < 9; vert++) {
-                for (int hor = 0; hor < 9; hor++) {
-                    if (thePuzzle[vert][hor].isEditable()) {
-                        Integer[] possibles = thePuzzle[vert][hor].getMissingNumbers();
-                        if (possibles.length == 1) {
-                            thePuzzle[vert][hor].setNumber(possibles[0]);
-                            thePuzzle[vert][hor].setEditable(false);
-                            toReturn[vert][hor] = possibles[0];
-                            refreshReferences();
+            loopThroughPuzzle((int vertical, int horizontal) -> {
+                        if (thePuzzle[vertical][horizontal].isEditable()) {
+                            Integer[] possibles = thePuzzle[vertical][horizontal].getMissingNumbers();
+                            if (possibles.length == 1) {
+                                thePuzzle[vertical][horizontal].setNumber(possibles[0]);
+                                thePuzzle[vertical][horizontal].setEditable(false);
+                                toReturn[vertical][horizontal] = possibles[0];
+                                refreshReferences();
+                            }
+                            thePuzzle[vertical][horizontal].checkStraightLines();
+                            thePuzzle[vertical][horizontal].checkSquare();
+
+                        } else {
+                            toReturn[vertical][horizontal] = thePuzzle[vertical][horizontal].getNumber();
                         }
-                    } else {
-                        toReturn[vert][hor] = thePuzzle[vert][hor].getNumber();
+
                     }
-                }
-            }
+            );
+            System.out.println(outputPuzzle());
+
         }
         return toReturn;
     }
 
     private boolean hasEmpties(Integer[][] toCheck){
-
-        for(int ver = 0; ver<9;ver++){
-            for(int hor=0; hor < 9; hor++){
-                if(toCheck[ver][hor] == null)
-                    return true;
-            }
-        }
-        return false;
+        return (boolean)loopThroughPuzzle((int vertical, int horizontal) -> {
+            return Boolean.valueOf(toCheck[vertical][horizontal] == null);
+            },Boolean.valueOf(false)
+        );
     }
 
     public Integer[] getMissingNumbers(int vertical, int horizontal){
