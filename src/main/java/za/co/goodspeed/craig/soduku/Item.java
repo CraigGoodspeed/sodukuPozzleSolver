@@ -17,8 +17,6 @@ public class Item {
     boolean editable;
     Integer number;
     Integer verticalCoordinate,horizontalCoordinate;
-    Integer[] verticalReference,horizontalReference;
-    Integer[][] squareReference;
     Item[][] puzzle;
 
     public Item(int verticalCoordinate, int horizontalCoordinate, Item[][] puzzle){
@@ -34,56 +32,39 @@ public class Item {
         editable = false;
     }
 
-    public void setVerticalReference(){
-        verticalReference = new Integer[9];
-        for(int vCord = 0; vCord < verticalReference.length; vCord++){
-            verticalReference[vCord] = puzzle[verticalCoordinate][vCord].getNumber();
-        }
-    }
     public Integer[] getVerticalReference(){
-        if(verticalReference == null)
-            setVerticalReference();
-        return verticalReference;
-
-    }
-    public void refreshReferences(){
-        setVerticalReference();
-        setHorizontalReference();
-        setSquareReference();
-    }
-    public void setHorizontalReference(){
-        horizontalReference = new Integer[9];
-        for(int hCord = 0; hCord < horizontalReference.length; hCord++){
-            horizontalReference[hCord] = puzzle[hCord][horizontalCoordinate].getNumber();
+        Integer[] toReturn = new Integer[9];
+        for(int vCord = 0; vCord < toReturn.length; vCord++){
+            toReturn[vCord] = puzzle[verticalCoordinate][vCord].getNumber();
         }
+        return toReturn;
     }
+
+
     public Integer[] getHorizontalReference(){
-        if(horizontalReference == null)
-            setHorizontalReference();
-        return horizontalReference;
+        Integer[] toReturn = new Integer[9];
+        for(int hCord = 0; hCord < toReturn.length; hCord++){
+            toReturn[hCord] = puzzle[hCord][horizontalCoordinate].getNumber();
+        }
+        return toReturn;
     }
 
     public Integer[][] getSquareReference(){
-        if(squareReference == null)
-            setSquareReference();
-        return squareReference;
-    }
-
-    public void setSquareReference(){
         int horizontalStartIndex = getCordinate(horizontalCoordinate) * 3;
         int verticalStartIndex = getCordinate(verticalCoordinate) * 3;
-        squareReference = new Integer[3][3];
+        Integer[][] toReturn = new Integer[3][3];
         for(int y = 0; y < 3; y++ ) {//vertical loop
             for(int x = 0; x < 3; x++){//horizontal loop
-                squareReference[y][x] = puzzle[verticalStartIndex + y][horizontalStartIndex+x].getNumber();
+                toReturn[y][x] = puzzle[verticalStartIndex + y][horizontalStartIndex+x].getNumber();
             }
         }
+        return toReturn;
     }
+
     public void setNumber(Integer number){
         System.out.println(String.format("setting number at cordinates %s,%s with value %s",verticalCoordinate,horizontalCoordinate,number));
         this.number = number;
         this.setEditable(false);
-        refreshReferences();
     }
 
 
@@ -115,7 +96,6 @@ public class Item {
         if(isEditable()) {
             doVerticalCheck();
             doHorizontalCheck();
-            refreshReferences();
         }
     }
 
@@ -169,12 +149,6 @@ public class Item {
                         !(v1 != null && v1.equals(cnt))
                         &&
                         !(v2 != null && v2.equals(cnt));
-                        /*&&
-                        !(
-                                Arrays.deepEquals(getSquareReference(),getPuzzle()[verticalCoordinate][squareIndexes.getLine1()].getSquareReference())
-                                ||
-                                Arrays.deepEquals(getSquareReference(),getPuzzle()[verticalCoordinate][squareIndexes.getLine2()].getSquareReference())
-                        );*/
 
                 if(bothSetAndNotSameSquare) {//no where else for this number, this value must appear here.
                     System.out.println("setting via vertical");
@@ -205,13 +179,6 @@ public class Item {
                         !(v1 != null && v1.equals(cnt))
                         &&
                         !(v2 != null && v2.equals(cnt));
-/*                        //&&
-                        //!(
-                                Arrays.deepEquals(getSquareReference(),getPuzzle()[squareIndexes.getLine2()][horizontalCoordinate].getSquareReference())
-                                ||
-                                Arrays.deepEquals(getSquareReference(),getPuzzle()[squareIndexes.getLine1()][horizontalCoordinate].getSquareReference())
-                        );*/
-
                 if(bothSetAndNotSameSquare) {//no where else for this number, this value must appear here.
                     System.out.println("setting via horizontal");
                     getPuzzle()[verticalCoordinate][horizontalCoordinate].setNumber(cnt);
@@ -329,9 +296,9 @@ public class Item {
 
     public boolean validateMe(){
         return
-                validateCollection(verticalReference)
-                && validateCollection(horizontalReference)
-                && validateSquare(squareReference);
+                validateCollection(getVerticalReference())
+                && validateCollection(getHorizontalReference())
+                && validateSquare(getSquareReference());
     }
     private boolean validateCollection(Integer[] validateMe){
         return Arrays.asList(validateMe).containsAll(constants.getALLNUMBERS());

@@ -2,7 +2,6 @@ package za.co.goodspeed.craig.soduku;
 
 import lombok.SneakyThrows;
 
-import java.util.concurrent.Callable;
 
 public class Puzzle {
     interface loopHelper{
@@ -24,14 +23,6 @@ public class Puzzle {
     private void setItem(int vertical, int horizontal, Integer value ){
         thePuzzle[vertical][horizontal].setNumber(value);
         thePuzzle[vertical][horizontal].setEditable(false);
-    }
-
-    private void refreshReferences(){
-        loopThroughPuzzle((int vertical, int horizontal) -> {
-                thePuzzle[vertical][horizontal].setHorizontalReference();
-                thePuzzle[vertical][horizontal].setVerticalReference();
-                thePuzzle[vertical][horizontal].setSquareReference();
-        });
     }
 
     public String outputPuzzle(){
@@ -123,6 +114,52 @@ public class Puzzle {
 
     }
 
+    public static Puzzle generateMediumPuzzle() {
+        Puzzle toReturn = new Puzzle();
+
+
+        toReturn.setItem(0, 1, 9);
+        toReturn.setItem(4, 1, 4);
+        toReturn.setItem(7, 1, 7);
+        toReturn.setItem(8, 1, 2);
+
+        toReturn.setItem(2, 2, 4);
+        toReturn.setItem(4, 2, 6);
+        toReturn.setItem(5, 2, 8);
+        toReturn.setItem(8, 2, 3);
+
+        toReturn.setItem(0, 3, 7);
+        toReturn.setItem(2, 3, 1);
+        toReturn.setItem(4, 3, 8);
+        toReturn.setItem(5, 3, 3);
+        toReturn.setItem(6, 3, 5);
+        toReturn.setItem(7, 3, 2);
+
+        toReturn.setItem(1, 4, 2);
+        toReturn.setItem(7, 4, 3);
+
+        toReturn.setItem(1, 5, 5);
+        toReturn.setItem(2, 5, 6);
+        toReturn.setItem(3, 5, 1);
+        toReturn.setItem(4, 5, 2);
+        toReturn.setItem(6, 5, 9);
+        toReturn.setItem(8, 5, 8);
+
+        toReturn.setItem(0, 6, 5);
+        toReturn.setItem(3, 6, 3);
+        toReturn.setItem(4, 6, 1);
+        toReturn.setItem(6, 6, 2);
+
+        toReturn.setItem(0, 7, 1);
+        toReturn.setItem(1, 7, 3);
+        toReturn.setItem(4, 7, 7);
+        toReturn.setItem(8, 7, 4);
+
+
+        return toReturn;
+
+    }
+
     public static Puzzle generateToughPuzzle(){
         Puzzle toReturn = new Puzzle();
 
@@ -162,7 +199,7 @@ public class Puzzle {
 
         toReturn.setItem(5,8,3);
         toReturn.setItem(8,8,2);
-        //toReturn.setItem(8,7,9);
+        toReturn.setItem(8,7,9);
 
         return toReturn;
 
@@ -173,6 +210,7 @@ public class Puzzle {
         while(hasEmpties(toReturn)) {
 
             loopThroughPuzzle((int vertical, int horizontal) -> {
+
                         if (thePuzzle[vertical][horizontal].isEditable()) {
                             Integer[] possibles = thePuzzle[vertical][horizontal].getMissingNumbers();
                             if (possibles.length == 1) {
@@ -184,7 +222,7 @@ public class Puzzle {
                             thePuzzle[vertical][horizontal].checkStraightLines();
                             thePuzzle[vertical][horizontal].checkHorizontal();
                             thePuzzle[vertical][horizontal].checkVertical();
-                            refreshReferences();
+
                         } else {
                             toReturn[vertical][horizontal] = thePuzzle[vertical][horizontal].getNumber();
                         }
