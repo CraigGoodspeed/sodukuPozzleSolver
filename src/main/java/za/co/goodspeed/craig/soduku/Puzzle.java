@@ -199,7 +199,8 @@ public class Puzzle {
 
         toReturn.setItem(5,8,3);
         toReturn.setItem(8,8,2);
-        toReturn.setItem(8,7,9);
+
+        //toReturn.setItem(8,7,9);
 
         return toReturn;
 

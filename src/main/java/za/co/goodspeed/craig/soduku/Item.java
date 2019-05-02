@@ -219,8 +219,45 @@ public class Item {
                 thisSquare[index].setNumber(cnt);
             }
         }
-
     }
+
+    public void doImpliedChecks(){
+        Integer[] horizontalCheck = getHorizontalReference();
+        Integer nullCount = (new Long(Arrays.stream(horizontalCheck).filter(i -> i == null).count())).intValue();
+        if(nullCount <= 3 && nullCount > 0 && sameSquare(horizontalCheck)){
+            //1) get implied values
+            //we need to imply these 2 or 3 cells are values as an example 6,4,9
+            //with the new values then check the square for complete items.
+            Integer[] impliedValues = cleanWhenExists(constants.getALLNUMBERS(), horizontalCheck).toArray(new Integer[0]);
+            //TODO: implement this method, set the implied values then checkSquare if we get a hit, great otherwise unset the values.
+            Integer[] nullIndexes = new Integer[nullCount];
+            for(int i = 0; i < nullIndexes.length;i++){
+
+            }
+        }
+    }
+
+    public boolean sameSquare(Integer[] toCheck){
+        Integer[] items = new Integer[3];
+        int itemCounter = 0;
+        for(int i = 0; i < toCheck.length && itemCounter < items.length;i++){
+            if(toCheck[i] == null) {
+                items[itemCounter] = i;
+                itemCounter++;
+            }
+        }
+        Integer[] sorted = (Integer[])Arrays.stream(items).sorted().toArray();
+        if(sorted.length == 1)
+            return false;//let other methods handle this.
+        //square bounds : 0:2, 3:5, 6:8
+        return
+                (sorted[0] >= 0 && sorted[sorted.length - 1] <= 2)
+                ||
+                (sorted[0] >= 3 && sorted[sorted.length - 1] <= 5)
+                ||
+                (sorted[0] >= 6 && sorted[sorted.length - 1] <= 8);
+    }
+
     public void checkVertical(){
         Item[] vertical = getPuzzle()[verticalCoordinate];
         checkLine(vertical);
