@@ -162,6 +162,7 @@ public class Puzzle {
 
         toReturn.setItem(5,8,3);
         toReturn.setItem(8,8,2);
+        //toReturn.setItem(8,7,9);
 
         return toReturn;
 
@@ -170,6 +171,7 @@ public class Puzzle {
     public Integer[][] solvePuzzle(){
         Integer[][] toReturn = new Integer[9][9];
         while(hasEmpties(toReturn)) {
+
             loopThroughPuzzle((int vertical, int horizontal) -> {
                         if (thePuzzle[vertical][horizontal].isEditable()) {
                             Integer[] possibles = thePuzzle[vertical][horizontal].getMissingNumbers();
@@ -177,17 +179,19 @@ public class Puzzle {
                                 thePuzzle[vertical][horizontal].setNumber(possibles[0]);
                                 thePuzzle[vertical][horizontal].setEditable(false);
                                 toReturn[vertical][horizontal] = possibles[0];
-                                refreshReferences();
                             }
-                            thePuzzle[vertical][horizontal].checkStraightLines();
                             thePuzzle[vertical][horizontal].checkSquare();
-
+                            thePuzzle[vertical][horizontal].checkStraightLines();
+                            thePuzzle[vertical][horizontal].checkHorizontal();
+                            thePuzzle[vertical][horizontal].checkVertical();
+                            refreshReferences();
                         } else {
                             toReturn[vertical][horizontal] = thePuzzle[vertical][horizontal].getNumber();
                         }
 
                     }
             );
+
             System.out.println(outputPuzzle());
 
         }

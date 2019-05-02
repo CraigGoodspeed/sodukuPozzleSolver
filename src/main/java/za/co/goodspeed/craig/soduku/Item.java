@@ -153,14 +153,22 @@ public class Item {
         IndexHelper puzzleIndexes = getStraightIndexes(verticalCoordinate);
         Integer[] line1 = getPuzzle()[puzzleIndexes.getLine1()][horizontalCoordinate].getVerticalReference();
         Integer[] line2 = getPuzzle()[puzzleIndexes.getLine2()][horizontalCoordinate].getVerticalReference();
+        Integer[] myVerticalLine = getVerticalReference();
+        Integer[] myHorizontalLine = getHorizontalReference();
         for(int cnt = 1; cnt < 10; cnt++){
-            boolean contains = bothLinesContain(line1,line2,convertSquareToSingleLine(),cnt);
+            boolean contains = bothLinesContain(line1,line2,myVerticalLine,myHorizontalLine,convertSquareToSingleLine(),cnt);
             if(contains){
                 IndexHelper squareIndexes = getStraightIndexes(horizontalCoordinate);
+                Integer v1 = getPuzzle()[verticalCoordinate][squareIndexes.getLine1()].getNumber();
+                Integer v2 = getPuzzle()[verticalCoordinate][squareIndexes.getLine2()].getNumber();
                 boolean bothSetAndNotSameSquare =
                         !getPuzzle()[verticalCoordinate][squareIndexes.getLine1()].isEditable()
                         &&
-                        !getPuzzle()[verticalCoordinate][squareIndexes.getLine2()].isEditable();
+                        !getPuzzle()[verticalCoordinate][squareIndexes.getLine2()].isEditable()
+                        &&
+                        !(v1 != null && v1.equals(cnt))
+                        &&
+                        !(v2 != null && v2.equals(cnt));
                         /*&&
                         !(
                                 Arrays.deepEquals(getSquareReference(),getPuzzle()[verticalCoordinate][squareIndexes.getLine1()].getSquareReference())
@@ -180,14 +188,23 @@ public class Item {
         IndexHelper puzzleIndexes = getStraightIndexes(horizontalCoordinate);
         Integer[] line1 = getPuzzle()[verticalCoordinate][puzzleIndexes.getLine1()].getHorizontalReference();
         Integer[] line2 = getPuzzle()[verticalCoordinate][puzzleIndexes.getLine2()].getHorizontalReference();
+        Integer[] myHorizontalLine = getHorizontalReference();
+        Integer[] myVerticalLine = getVerticalReference();
         for(int cnt = 1; cnt < 10; cnt++){
-            boolean contains = bothLinesContain(line1,line2,convertSquareToSingleLine(),cnt);
+            boolean contains = bothLinesContain(line1,line2,myVerticalLine, myHorizontalLine,convertSquareToSingleLine(),cnt);
             if(contains){
                 IndexHelper squareIndexes = getStraightIndexes(verticalCoordinate);
+                Integer v1 = getPuzzle()[squareIndexes.getLine1()][horizontalCoordinate].getNumber();
+                Integer v2 = getPuzzle()[squareIndexes.getLine2()][horizontalCoordinate].getNumber();
+
                 boolean bothSetAndNotSameSquare =
                         !getPuzzle()[squareIndexes.getLine1()][horizontalCoordinate].isEditable()
                         &&
-                        !getPuzzle()[squareIndexes.getLine2()][horizontalCoordinate].isEditable();
+                        !getPuzzle()[squareIndexes.getLine2()][horizontalCoordinate].isEditable()
+                        &&
+                        !(v1 != null && v1.equals(cnt))
+                        &&
+                        !(v2 != null && v2.equals(cnt));
 /*                        //&&
                         //!(
                                 Arrays.deepEquals(getSquareReference(),getPuzzle()[squareIndexes.getLine2()][horizontalCoordinate].getSquareReference())
@@ -220,16 +237,11 @@ public class Item {
             for(int cbCount = 0; cbCount < canBe.length; cbCount++) {
                 canBe[cbCount] = thisSquare[cbCount].isEditable()
                         &&
-                        !(
-                            checkLines(thisSquare[cbCount].getHorizontalReference(),
-                                    thisSquare[cbCount].getVerticalReference(),
-                                    cnt
-                                    )
-                        )
+                        !(arrayContains(thisSquare[cbCount].getHorizontalReference(), cnt))//should not contain horizontal
                         &&
-                        (
-                            wrapTheMethod(thisSquare[cbCount].convertSquareToSingleLine(),cnt)
-                        )
+                        !(arrayContains(thisSquare[cbCount].getVerticalReference(), cnt))//should not contain vertical
+                        &&
+                        !(arrayContains(thisSquare[cbCount].convertSquareToSingleLine(),cnt))//should not be in the square
                 ;
                 if(canBe[cbCount])
                     index = cbCount;
@@ -242,22 +254,68 @@ public class Item {
         }
 
     }
-    private boolean wrapTheMethod(Integer[] data, Integer toFind){
-        return !Arrays.stream(data).anyMatch(i -> i != null && i.equals(toFind));
+    public void checkVertical(){
+        Item[] vertical = getPuzzle()[verticalCoordinate];
+        checkLine(vertical);
     }
-    private boolean checkLines(Integer[] horizontal, Integer[] vertical, Integer toFind){
-        return
-                (Arrays.stream(horizontal).anyMatch(i -> i != null&& i.equals(toFind))
-                        ||
-                        Arrays.stream(vertical).anyMatch(i -> i != null&& i.equals(toFind)));
+
+    public void checkHorizontal(){
+        Item[] horizontal = new Item[9];
+        for(int i = 0; i < horizontal.length;i++){
+            horizontal[i] = getPuzzle()[i][horizontalCoordinate];
+        }
+        checkLine(horizontal);
     }
-    private boolean bothLinesContain(Integer[] line1, Integer[] line2, Integer[] sqRef, Integer findMe){
+
+    private void checkLine(Item[] toCheck){
+
+        Integer index = 0;
+        Integer canBeValue;
+        for(int x = 0; x < 9;x++) {
+            Boolean[] canBe = new Boolean[9];
+            canBeValue = x + 1;
+            for (int i = 0; i < toCheck.length; i++) {
+                canBe[i] =
+                        toCheck[i].isEditable()
+                        &&
+                        !arrayContains(toCheck[i].getHorizontalReference(), canBeValue)
+                        &&
+                        !arrayContains(toCheck[i].getVerticalReference(), canBeValue)
+                        &&
+                        !arrayContains(toCheck[i].convertSquareToSingleLine(), canBeValue)
+                        &&
+                        !arrayContains(getVerticalReference(), canBeValue)
+                        &&
+                        !arrayContains(getHorizontalReference(), canBeValue);
+
+                if (canBe[i])
+                    index = i;
+            }
+            if(Arrays.stream(canBe).filter(i -> i.equals(true)).count() == 1){
+                System.out.println("setting via the line check");
+                toCheck[index].setNumber(canBeValue);
+            }
+        }
+
+    }
+
+    private boolean arrayContains(Integer[] items, Integer findMe){
+        return Arrays.stream(items).anyMatch(i -> i!= null && i.equals(findMe));
+
+    }
+
+    private boolean bothLinesContain(Integer[] line1, Integer[] line2, Integer[] myVertcalLine, Integer[] myHorizontalLine, Integer[] sqRef, Integer findMe){
         return
-                Arrays.stream(line1).anyMatch(i -> i != null && i.equals(findMe))
+                arrayContains(line1, findMe)
                 &&
-                Arrays.stream(line2).anyMatch( i -> i != null && i.equals(findMe))
+                arrayContains(line2,findMe)
                 &&
-                !Arrays.stream(sqRef).anyMatch( i -> i != null && i.equals(findMe));
+                !arrayContains(sqRef,findMe)
+                &&
+                !arrayContains(myVertcalLine,findMe)
+                &&
+                !arrayContains(myHorizontalLine,findMe)
+                ;
     }
 
 
