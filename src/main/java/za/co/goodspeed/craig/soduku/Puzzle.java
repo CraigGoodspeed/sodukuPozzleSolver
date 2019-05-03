@@ -223,6 +223,7 @@ public class Puzzle {
                             thePuzzle[vertical][horizontal].checkStraightLines();
                             thePuzzle[vertical][horizontal].checkHorizontal();
                             thePuzzle[vertical][horizontal].checkVertical();
+                            thePuzzle[vertical][horizontal].doImpliedChecks();
 
                         } else {
                             toReturn[vertical][horizontal] = thePuzzle[vertical][horizontal].getNumber();
