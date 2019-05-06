@@ -88,6 +88,16 @@ public class Item {
         return toReturn.toArray(new Integer[0]);
     }
 
+    public void simpleEliminate(){
+        if(isEditable()) {
+            Integer[] possibles = getMissingNumbers();
+            if (possibles.length == 1) {
+                setNumber(possibles[0]);
+                setEditable(false);
+            }
+        }
+    }
+
     public void checkStraightLines(){
         //coordinates,
         //when 2,5,8 check lines x - 1 and x -2
@@ -221,10 +231,17 @@ public class Item {
         }
     }
 
-    public void doImpliedChecks(){
+    public void doImpliedHorizontalChecks(){
+        doImpliedChecks(true);
+    }
+    public void doImpliedVerticalChecks(){
+        doImpliedChecks(false);
+    }
+
+    private void doImpliedChecks(boolean isHorizontal){
         if(!isEditable())
             return;
-        Integer[] horizontalCheck = getHorizontalReference();
+        Integer[] horizontalCheck = isHorizontal ? getHorizontalReference() : getVerticalReference();
         Integer nullCount = (new Long(Arrays.stream(horizontalCheck).filter(i -> i == null).count())).intValue();
         if(nullCount <= 3 && nullCount > 0 && sameSquare(horizontalCheck,nullCount)){
             //1) get implied values
@@ -240,14 +257,28 @@ public class Item {
                     nullCounter++;
                 }
             }
-            int impliedCounter =0;
+
             for(int i = 0; i < nullIndexes.length;i++){
-                getPuzzle()[verticalCoordinate][nullIndexes[i]].setNumber(impliedValues[i]);
+                if(isHorizontal)
+                    getPuzzle()[nullIndexes[i]][horizontalCoordinate].setNumber(impliedValues[i]);
+                else
+                    getPuzzle()[verticalCoordinate][nullIndexes[i]].setNumber(impliedValues[i]);
             }
             checkSquare();
+            simpleEliminate();
+            if(isHorizontal)
+                doVerticalCheck();
+            else
+                doHorizontalCheck();
             for(int i = 0; i < nullIndexes.length;i++){
-                getPuzzle()[verticalCoordinate][nullIndexes[i]].setNumber(null);
-                getPuzzle()[verticalCoordinate][nullIndexes[i]].setEditable(true);
+                if(isHorizontal) {
+                    getPuzzle()[nullIndexes[i]][horizontalCoordinate].setNumber(null);
+                    getPuzzle()[nullIndexes[i]][horizontalCoordinate].setEditable(true);
+                }else {
+                    getPuzzle()[verticalCoordinate][nullIndexes[i]].setNumber(null);
+                    getPuzzle()[verticalCoordinate][nullIndexes[i]].setEditable(true);
+
+                }
             }
 
         }

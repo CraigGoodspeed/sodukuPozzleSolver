@@ -6,7 +6,9 @@ public class Application {
     public static void main(String[] args) throws IOException {
         //Puzzle p = Puzzle.generateEasyPuzzle(); //--> this is solvable
         //Puzzle p = Puzzle.generateMediumPuzzle();//also solves
-        Puzzle p = Puzzle.generateToughPuzzle();//cannot find a solution here - need to make the app smarter.
+        Puzzle p = Puzzle.generateToughPuzzle();//SOLVED!
+        //Puzzle p = Puzzle.generateExtremePuzzle();
+
         Integer[][] solution = p.solvePuzzle();
 
         for(int hor = 0; hor < 9; hor++){

@@ -160,6 +160,46 @@ public class Puzzle {
 
     }
 
+    public static Puzzle generateExtremePuzzle() {
+        Puzzle toReturn = new Puzzle();
+
+        toReturn.setItem(1, 0, 1);
+        toReturn.setItem(2, 0, 2);
+        toReturn.setItem(3, 0, 3);
+        toReturn.setItem(4, 0, 6);
+
+        toReturn.setItem(0, 1, 5);
+        toReturn.setItem(1, 1, 7);
+        toReturn.setItem(8, 1, 9);
+
+        toReturn.setItem(3, 2, 8);
+
+        toReturn.setItem(6, 3, 4);
+
+        toReturn.setItem(1, 4, 6);
+        toReturn.setItem(3, 4, 2);
+
+        toReturn.setItem(4, 5, 9);
+        toReturn.setItem(5, 5, 1);
+
+        toReturn.setItem(0, 6, 8);
+        toReturn.setItem(3, 6, 9);
+        toReturn.setItem(5, 6, 4);
+        toReturn.setItem(6, 6, 5);
+        toReturn.setItem(8, 6, 7);
+
+
+        toReturn.setItem(8, 7, 1);
+
+        toReturn.setItem(1, 8, 9);
+        toReturn.setItem(2, 8, 4);
+        toReturn.setItem(7, 8, 6);
+        toReturn.setItem(8, 8, 3);
+
+        return toReturn;
+
+    }
+
     public static Puzzle generateToughPuzzle(){
         Puzzle toReturn = new Puzzle();
 
@@ -213,20 +253,20 @@ public class Puzzle {
             loopThroughPuzzle((int vertical, int horizontal) -> {
 
                         if (thePuzzle[vertical][horizontal].isEditable()) {
-                            Integer[] possibles = thePuzzle[vertical][horizontal].getMissingNumbers();
+                            thePuzzle[vertical][horizontal].simpleEliminate();
+                            /*Integer[] possibles = thePuzzle[vertical][horizontal].getMissingNumbers();
                             if (possibles.length == 1) {
                                 thePuzzle[vertical][horizontal].setNumber(possibles[0]);
                                 thePuzzle[vertical][horizontal].setEditable(false);
                                 toReturn[vertical][horizontal] = possibles[0];
-                            }
+                            }*/
                             thePuzzle[vertical][horizontal].checkSquare();
                             thePuzzle[vertical][horizontal].checkStraightLines();
                             thePuzzle[vertical][horizontal].checkHorizontal();
                             thePuzzle[vertical][horizontal].checkVertical();
-                            thePuzzle[vertical][horizontal].doImpliedChecks();
+                            thePuzzle[vertical][horizontal].doImpliedHorizontalChecks();
+                            //thePuzzle[vertical][horizontal].doImpliedVerticalChecks();
 
-                        } else {
-                            toReturn[vertical][horizontal] = thePuzzle[vertical][horizontal].getNumber();
                         }
 
                     }
@@ -243,9 +283,5 @@ public class Puzzle {
             return Boolean.valueOf(toCheck[vertical][horizontal] == null);
             },Boolean.valueOf(false)
         );
-    }
-
-    public Integer[] getMissingNumbers(int vertical, int horizontal){
-        return thePuzzle[1][4].getMissingNumbers();
     }
 }
