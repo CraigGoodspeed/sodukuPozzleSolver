@@ -246,9 +246,8 @@ public class Puzzle {
 
     }
 
-    public Integer[][] solvePuzzle(){
-        Integer[][] toReturn = new Integer[9][9];
-        while(hasEmpties(toReturn)) {
+    public void solvePuzzle(){
+        while(!allSet()) {
 
             loopThroughPuzzle((int vertical, int horizontal) -> {
 
@@ -265,7 +264,7 @@ public class Puzzle {
                             thePuzzle[vertical][horizontal].checkHorizontal();
                             thePuzzle[vertical][horizontal].checkVertical();
                             thePuzzle[vertical][horizontal].doImpliedHorizontalChecks();
-                            //thePuzzle[vertical][horizontal].doImpliedVerticalChecks();
+                            thePuzzle[vertical][horizontal].doImpliedVerticalChecks();
 
                         }
 
@@ -275,13 +274,15 @@ public class Puzzle {
             System.out.println(outputPuzzle());
 
         }
-        return toReturn;
     }
 
-    private boolean hasEmpties(Integer[][] toCheck){
-        return (boolean)loopThroughPuzzle((int vertical, int horizontal) -> {
-            return Boolean.valueOf(toCheck[vertical][horizontal] == null);
-            },Boolean.valueOf(false)
-        );
+    private boolean allSet(){
+        boolean toReturn = true;
+        for(int vertical = 0; vertical < 9 && toReturn; vertical++ ){
+            for (int horizontal = 0;horizontal<9 && toReturn;horizontal++){
+                toReturn = !thePuzzle[vertical][horizontal].isEditable() && toReturn;
+            }
+        }
+        return toReturn;
     }
 }

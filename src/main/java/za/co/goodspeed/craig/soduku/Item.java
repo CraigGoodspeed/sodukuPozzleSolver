@@ -93,7 +93,6 @@ public class Item {
             Integer[] possibles = getMissingNumbers();
             if (possibles.length == 1) {
                 setNumber(possibles[0]);
-                setEditable(false);
             }
         }
     }
@@ -196,8 +195,7 @@ public class Item {
             }
         }
     }
-
-    public void checkSquare(){
+    private Item[] getMySquare(){
         Item[] thisSquare = new Item[9];
         int horizontalStartIndex = getCordinate(horizontalCoordinate) * 3;
         int verticalStartIndex = getCordinate(verticalCoordinate) * 3;
@@ -208,7 +206,12 @@ public class Item {
                 index++;
             }
         }
-        index = -1;
+        return thisSquare;
+    }
+
+    public void checkSquare(){
+        Item[] thisSquare = getMySquare();
+        int index = -1;
         for(int cnt = 1; cnt < 10; cnt++){
             Boolean[] canBe = new Boolean[9];
             for(int cbCount = 0; cbCount < canBe.length; cbCount++) {
@@ -248,7 +251,7 @@ public class Item {
             //we need to imply these 2 or 3 cells are values as an example 6,4,9
             //with the new values then check the square for complete items.
             Integer[] impliedValues = cleanWhenExists(constants.getALLNUMBERS(), horizontalCheck).toArray(new Integer[0]);
-            //TODO: implement this method, set the implied values then checkSquare if we get a hit, great otherwise unset the values.
+
             Integer[] nullIndexes = new Integer[nullCount];
             int nullCounter = 0;
             for(int i = 0; i < 9; i++){
@@ -265,11 +268,14 @@ public class Item {
                     getPuzzle()[verticalCoordinate][nullIndexes[i]].setNumber(impliedValues[i]);
             }
             checkSquare();
-            simpleEliminate();
+            Item[] mySquare = getMySquare();
+            for(Item i : mySquare){
+                i.simpleEliminate();
+            }
             if(isHorizontal)
-                doVerticalCheck();
-            else
                 doHorizontalCheck();
+            else
+                doVerticalCheck();
             for(int i = 0; i < nullIndexes.length;i++){
                 if(isHorizontal) {
                     getPuzzle()[nullIndexes[i]][horizontalCoordinate].setNumber(null);
