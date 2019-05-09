@@ -1,12 +1,9 @@
 package za.co.goodspeed.craig.soduku;
 
-import javafx.util.Pair;
 import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 @Data
 public class Item {
@@ -14,6 +11,7 @@ public class Item {
     public class IndexHelper{
         Integer line1,line2;
     }
+
     boolean editable;
     Integer number;
     Integer verticalCoordinate,horizontalCoordinate;
