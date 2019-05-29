@@ -233,18 +233,25 @@ public class Item {
     }
 
     public void doImpliedHorizontalChecks(){
-        doImpliedChecks(true);
+        doImpliedChecks(true, false);
     }
     public void doImpliedVerticalChecks(){
-        doImpliedChecks(false);
+        doImpliedChecks(false,false);
     }
 
-    private void doImpliedChecks(boolean isHorizontal){
+    public void doImpliedHorizontalDifferentSquare(){
+        doImpliedChecks(true, true);
+    }
+    public void doImpliedVerticalDifferentSquare(){
+        doImpliedChecks(false, true);
+    }
+
+    private void doImpliedChecks(boolean isHorizontal, boolean sameSquareCheck){
         if(!isEditable())
             return;
         Integer[] horizontalCheck = isHorizontal ? getHorizontalReference() : getVerticalReference();
         Integer nullCount = (new Long(Arrays.stream(horizontalCheck).filter(i -> i == null).count())).intValue();
-        if(nullCount <= 3 && nullCount > 0 && sameSquare(horizontalCheck,nullCount)){
+        if(nullCount <= 3 && nullCount > 0 && (sameSquare(horizontalCheck,nullCount) || sameSquareCheck)){
             //1) get implied values
             //we need to imply these 2 or 3 cells are values as an example 6,4,9
             //with the new values then check the square for complete items.

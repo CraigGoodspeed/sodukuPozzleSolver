@@ -39,7 +39,9 @@ public class Puzzle {
     }
 
     @SneakyThrows
-    public void loopThroughPuzzle(loopHelper toCall){
+    public void loopThroughPuzzle(loopHelper toCall
+    ){
+
         for(int vertical = 0; vertical < thePuzzle.length; vertical++) {
             for (int horizontal = 0; horizontal < thePuzzle[vertical].length; horizontal++) {
                 toCall.method(vertical,horizontal);
@@ -200,6 +202,45 @@ public class Puzzle {
 
     }
 
+    public static Puzzle generateExtremePuzzleV2() {
+        Puzzle toReturn = new Puzzle();
+
+        toReturn.setItem(0, 0, 3);
+        toReturn.setItem(0, 1, 1);
+        toReturn.setItem(0, 4, 5);
+        toReturn.setItem(0, 6, 6);
+
+        toReturn.setItem(2, 4, 8);
+        toReturn.setItem(2, 5, 4);
+        toReturn.setItem(3, 5, 2);
+
+        toReturn.setItem(3, 6, 4);
+
+        toReturn.setItem(4, 1, 6);
+
+        toReturn.setItem(4, 2, 3);
+        toReturn.setItem(4, 3, 7);
+
+        toReturn.setItem(5, 2, 2);
+        toReturn.setItem(5, 4, 9);
+
+        toReturn.setItem(5, 8, 5);
+        toReturn.setItem(6, 0, 1);
+        toReturn.setItem(6, 1, 5);
+        toReturn.setItem(6, 6, 9);
+        toReturn.setItem(6, 7, 2);
+
+
+        toReturn.setItem(7, 0, 6);
+
+        toReturn.setItem(7, 7, 5);
+        toReturn.setItem(7, 8, 8);
+        toReturn.setItem(8, 6, 5);
+        toReturn.setItem(8, 8, 7);
+
+        return toReturn;
+
+    }
     public static Puzzle generateToughPuzzle(){
         Puzzle toReturn = new Puzzle();
 
@@ -247,32 +288,37 @@ public class Puzzle {
     }
 
     public void solvePuzzle(){
+        int loopCount = 0;
         while(!allSet()) {
-
-            loopThroughPuzzle((int vertical, int horizontal) -> {
+            //TODO : cleanup loopCount should call complex checks (implied checks) when nothing gets set from the simple checks method.
+            //TODO : cleanup loopCount should call complex checks (implied checks) when nothing gets set from the simple checks method.
+            loopThroughPuzzle((loopCount <= 5) ? (int vertical, int horizontal) -> {
 
                         if (thePuzzle[vertical][horizontal].isEditable()) {
                             thePuzzle[vertical][horizontal].simpleEliminate();
-                            /*Integer[] possibles = thePuzzle[vertical][horizontal].getMissingNumbers();
-                            if (possibles.length == 1) {
-                                thePuzzle[vertical][horizontal].setNumber(possibles[0]);
-                                thePuzzle[vertical][horizontal].setEditable(false);
-                                toReturn[vertical][horizontal] = possibles[0];
-                            }*/
                             thePuzzle[vertical][horizontal].checkSquare();
                             thePuzzle[vertical][horizontal].checkStraightLines();
                             thePuzzle[vertical][horizontal].checkHorizontal();
                             thePuzzle[vertical][horizontal].checkVertical();
                             thePuzzle[vertical][horizontal].doImpliedHorizontalChecks();
                             thePuzzle[vertical][horizontal].doImpliedVerticalChecks();
-
                         }
 
+                    } :
+                    (int vertical, int horizontal) -> {
+                        if (thePuzzle[vertical][horizontal].isEditable()) {
+                            thePuzzle[vertical][horizontal].simpleEliminate();
+                            thePuzzle[vertical][horizontal].checkSquare();
+                            thePuzzle[vertical][horizontal].checkStraightLines();
+                            thePuzzle[vertical][horizontal].checkHorizontal();
+                            thePuzzle[vertical][horizontal].checkVertical();
+                            thePuzzle[vertical][horizontal].doImpliedHorizontalDifferentSquare();
+                            thePuzzle[vertical][horizontal].doImpliedVerticalDifferentSquare();
+                        }
                     }
             );
-
+            loopCount++;
             System.out.println(outputPuzzle());
-
         }
     }
 
