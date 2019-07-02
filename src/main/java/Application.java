@@ -4,12 +4,12 @@ import java.io.IOException;
 
 public class Application {
     public static void main(String[] args) throws IOException {
-        Puzzle p = Puzzle.generateEasyPuzzle(); //--> this is solvable
-        p.solvePuzzle();
-        Puzzle pMed = Puzzle.generateMediumPuzzle();//also solves
-        pMed.solvePuzzle();
-        Puzzle pHard = Puzzle.generateToughPuzzle();//SOLVED!
-        pHard.solvePuzzle();
+        //Puzzle p = Puzzle.generateEasyPuzzle(); //--> this is solvable
+        //p.solvePuzzle();
+        //Puzzle pMed = Puzzle.generateMediumPuzzle();//also solves
+        //pMed.solvePuzzle();
+        //Puzzle pHard = Puzzle.generateToughPuzzle();//SOLVED!
+        //pHard.solvePuzzle();
         Puzzle pExtreme = Puzzle.generateExtremePuzzleV2();
         pExtreme.solvePuzzle();
 

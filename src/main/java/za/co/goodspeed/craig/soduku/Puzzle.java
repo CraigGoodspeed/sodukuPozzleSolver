@@ -205,38 +205,41 @@ public class Puzzle {
     public static Puzzle generateExtremePuzzleV2() {
         Puzzle toReturn = new Puzzle();
 
-        toReturn.setItem(0, 0, 3);
-        toReturn.setItem(0, 1, 1);
-        toReturn.setItem(0, 4, 5);
-        toReturn.setItem(0, 6, 6);
+        toReturn.setItem(2, 0, 8);
+        toReturn.setItem(5, 0, 1);
+        toReturn.setItem(8, 0, 2);
 
-        toReturn.setItem(2, 4, 8);
-        toReturn.setItem(2, 5, 4);
-        toReturn.setItem(3, 5, 2);
+        toReturn.setItem(1, 1, 2);
+        toReturn.setItem(4, 1, 9);
+        toReturn.setItem(7, 1, 7);
 
-        toReturn.setItem(3, 6, 4);
+        toReturn.setItem(0, 2, 3);
+        toReturn.setItem(3, 2, 5);
+        toReturn.setItem(6, 2, 1);
 
-        toReturn.setItem(4, 1, 6);
+        toReturn.setItem(0, 3, 8);
+        toReturn.setItem(3, 3, 4);
+        toReturn.setItem(6, 3, 2);
 
-        toReturn.setItem(4, 2, 3);
-        toReturn.setItem(4, 3, 7);
+        toReturn.setItem(1, 4, 1);
+        toReturn.setItem(4, 4, 8);
+        toReturn.setItem(7, 4, 3);
 
-        toReturn.setItem(5, 2, 2);
-        toReturn.setItem(5, 4, 9);
+        toReturn.setItem(2, 5, 3);
+        toReturn.setItem(5, 5, 2);
+        toReturn.setItem(8, 5, 9);
 
-        toReturn.setItem(5, 8, 5);
-        toReturn.setItem(6, 0, 1);
-        toReturn.setItem(6, 1, 5);
-        toReturn.setItem(6, 6, 9);
-        toReturn.setItem(6, 7, 2);
+        toReturn.setItem(2, 6, 9);
+        toReturn.setItem(5, 6, 5);
+        toReturn.setItem(8, 6, 6);
 
+        toReturn.setItem(1, 7, 6);
+        toReturn.setItem(4, 7, 7);
+        toReturn.setItem(7, 7, 8);
 
-        toReturn.setItem(7, 0, 6);
-
-        toReturn.setItem(7, 7, 5);
-        toReturn.setItem(7, 8, 8);
-        toReturn.setItem(8, 6, 5);
-        toReturn.setItem(8, 8, 7);
+        toReturn.setItem(0, 8, 4);
+        toReturn.setItem(3, 8, 6);
+        toReturn.setItem(6, 8, 5);
 
         return toReturn;
 
@@ -289,6 +292,7 @@ public class Puzzle {
 
     public void solvePuzzle(){
         int loopCount = 0;
+        System.out.println(outputPuzzle());
         while(!allSet()) {
             //TODO : cleanup loopCount should call complex checks (implied checks) when nothing gets set from the simple checks method.
             //TODO : cleanup loopCount should call complex checks (implied checks) when nothing gets set from the simple checks method.
